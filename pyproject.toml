@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kunmeto"
+dynamic = ["version"]
+description = "RAW-level merging for Fujifilm GFX pixel-shift and multi-exposure shots"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Jack Chen", email = "jk881222@gmail.com" }]
+requires-python = ">=3.11"
+keywords = ["fujifilm", "gfx", "pixel-shift", "raw", "dng", "multi-exposure", "photography"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+]
+dependencies = [
+    "rawpy>=0.27",
+    "numpy>=2.0",
+    "tifffile>=2026.1,<2027",  # see kunmeto/dng.py's module docstring for why this is pinned
+    "imagecodecs>=2026.1",
+    "scipy>=1.13",
+    "jax>=0.7",   # CPU-only: jit-compiled repair kernels (kunmeto/kernels.py)
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/SkyLull/kunmeto"
+Issues = "https://github.com/SkyLull/kunmeto/issues"
+
+[project.scripts]
+kunmeto = "kunmeto.cli:main"
+
+[tool.hatch.version]
+path = "kunmeto/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kunmeto"]
+
+[tool.hatch.build.targets.sdist]
+include = ["kunmeto/", "tests/*.py", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["data: needs the private reference RAW sets under data/ (skipped when absent)"]
